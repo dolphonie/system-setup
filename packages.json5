@@ -1,4 +1,5 @@
 // List of packages to be installed. Key is package name, args are strings to be run
+// Allowed macros: pause: to wait for user to press enter, print: to print message
 {
   "basic_packages" : [
     "sudo apt-get update",
@@ -7,11 +8,18 @@
     "sudo apt-get install -y git \
                              nano \
                              gedit \
-                             "
+                             xclip \
+                             python3-pip"
+  ],
+  "ssh_keys" : [
+    'ssh-keygen -t rsa -b 4096 -C "pdkao@mit.edu"',
+    'eval "$(ssh-agent -s)"',
+    'ssh-add ~/.ssh/id_rsa',
+    "xclip -sel clip < ~/.ssh/id_rsa.pub",
   ],
   "nvidia_setup" : [
     "sudo add-apt-repository ppa:graphics-drivers/ppa -y",
-    "sudo apt-get purge nvidia*",
+    "sudo apt-get purge nvidia* -y",
   ],
   "chrome": [
     "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
@@ -24,7 +32,8 @@
     "sudo chmod +x /usr/local/bin/docker-compose"
   ],
   "virtualenvwrapper" : [
-
+    "sudo pip3 install virtualenvwrapper",
+    "echo '#virtualenv init\nexport WORKON_HOME=$HOME/.virtualenvs\nexport PROJECT_HOME=$HOME/Devel\nexport VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3\nsource /usr/local/bin/virtualenvwrapper.sh' >> ~/.bashrc "
   ],
   "virtualenv_setup" : [
 
@@ -36,7 +45,7 @@
     "sudo systemctl stop cups-browsed.service",
     "sudo systemctl disable cups-browsed.service",
   ],
-  "ssh_keys" : [
+  "MIT_VPN" : [
 
   ],
   "DRL_UROP" : [
