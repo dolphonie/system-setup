@@ -1,15 +1,16 @@
 // List of packages to be installed. Key is package name, args are strings to be run
-// Allowed macros: pause: to wait for user to press enter, print: to print message
+// Allowed macros: pause: to wait for user to press enter, print: to print message, break: breaks program
 {
   "basic_packages" : [
     "sudo apt-get update",
-    "sudo apt-get upgrade",
+    "sudo apt-get upgrade -y",
     "sudo apt-get dist-upgrade",
     "sudo apt-get install -y git \
                              nano \
                              gedit \
                              xclip \
-                             python3-pip"
+                             python3-pip \
+                             trash-cli"
   ],
   "ssh_keys" : [
     'ssh-keygen -t rsa -b 4096 -C "pdkao@mit.edu"',
@@ -18,8 +19,9 @@
     "xclip -sel clip < ~/.ssh/id_rsa.pub",
   ],
   "nvidia_setup" : [
-    "sudo add-apt-repository ppa:graphics-drivers/ppa -y",
-    "sudo apt-get purge nvidia* -y",
+    //"sudo add-apt-repository ppa:graphics-drivers/ppa -y",
+    //"sudo apt-get purge nvidia* -y",
+    "break:'Please install NVIDIA drivers (418) and cuDNN then restart installer script'"
   ],
   "chrome": [
     "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
@@ -36,6 +38,9 @@
     "echo '#virtualenv init\nexport WORKON_HOME=$HOME/.virtualenvs\nexport PROJECT_HOME=$HOME/Devel\nexport VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3\nsource /usr/local/bin/virtualenvwrapper.sh' >> ~/.bashrc "
   ],
   "virtualenv_setup" : [
+    "mkvirtualenv ml",
+    "workon ml",
+    "pip install tensorflow-gpu",
 
   ],
   "ROS" : [
@@ -50,7 +55,7 @@
   ],
   "DRL_UROP" : [
     'sudo apt-get install ros-kinetic-catkin -y',
-    'sudo sh -c ',echo ",deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.lis',
+    'sudo sh -c \'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list\'',
     'wget http://packages.ros.org/ros.key -O - | sudo apt-key add -',
     'sudo apt-get update',
     'sudo apt-get install python-catkin-tools',
