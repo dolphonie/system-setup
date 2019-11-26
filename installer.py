@@ -3,7 +3,8 @@ import argparse
 import json5
 import os
 from collections import OrderedDict
-import sys
+import subprocess
+from subprocess import Popen
 
 
 def list_to_file(filename, list_to_write):
@@ -23,6 +24,10 @@ def file_to_list(filename):
             to_ret.append(currentPlace)
     return to_ret
 
+def update_progress(progress, name, script_loc):
+    # Update progress file
+    progress.append(name)
+    list_to_file("{}/progress.txt".format(script_loc), progress)
 
 def install_packages():
     parser = argparse.ArgumentParser(description='A tutorial of argparse!')
@@ -57,14 +62,17 @@ def install_packages():
             # Check for macros
             if 'break:' in line:
                 print(line.replace('break:', ''))
+                update_progress(progress, name, script_loc)
+                return
             else:
-                result = os.system(line)
+                split = line.split(" ")
+                command = Popen(line, executable='bash', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+                command.communicate()
+                result = command.returncode
                 if result != 0:
                     raise SystemError("Package {} failed installing at line {}".format(name, line))\
 
-        # Update progress file
-        progress.append(name)
-        list_to_file("{}/progress.txt".format(script_loc), progress)
+        update_progress(progress, name, script_loc)
 
 if __name__ == "__main__":
     install_packages()

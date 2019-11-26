@@ -10,18 +10,21 @@
                              gedit \
                              xclip \
                              python3-pip \
-                             trash-cli"
+                             trash-cli \
+                             cmake \
+                             curl"
   ],
   "ssh_keys" : [
     'ssh-keygen -t rsa -b 4096 -C "pdkao@mit.edu"',
     'eval "$(ssh-agent -s)"',
     'ssh-add ~/.ssh/id_rsa',
     "xclip -sel clip < ~/.ssh/id_rsa.pub",
+    "break:Please add the ssh key on the clipboard to github"
   ],
   "nvidia_setup" : [
-    //"sudo add-apt-repository ppa:graphics-drivers/ppa -y",
-    //"sudo apt-get purge nvidia* -y",
-    "break:'Please install NVIDIA drivers (418) and cuDNN then restart installer script'"
+    "sudo add-apt-repository ppa:graphics-drivers/ppa -y",
+    "sudo apt-get purge nvidia* -y",
+    "break:Please install NVIDIA drivers (418) and cuDNN then restart installer script"
   ],
   "chrome": [
     "wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb",
@@ -30,21 +33,35 @@
   "docker" : [
     "curl -fsSL https://get.docker.com -o get-docker.sh",
     "sudo sh get-docker.sh",
+    "sudo usermod -aG docker $USER",
     'sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose',
     "sudo chmod +x /usr/local/bin/docker-compose"
   ],
   "virtualenvwrapper" : [
     "sudo pip3 install virtualenvwrapper",
-    "echo '#virtualenv init\nexport WORKON_HOME=$HOME/.virtualenvs\nexport PROJECT_HOME=$HOME/Devel\nexport VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3\nsource /usr/local/bin/virtualenvwrapper.sh' >> ~/.bashrc "
+    "echo '#virtualenv init\nexport WORKON_HOME=$HOME/.virtualenvs\nexport PROJECT_HOME=$HOME/Devel\nexport VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3\nsource /usr/local/bin/virtualenvwrapper.sh' >> ~/.bashrc ",
+    "source ~/.bashrc"
   ],
   "virtualenv_setup" : [
-    "mkvirtualenv ml",
-    "workon ml",
-    "pip install tensorflow-gpu",
-
+    "sudo apt-get install libcupti-dev -y",
+    //"echo 'export LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc",
+    "export WORKON_HOME=$HOME/.virtualenvs && \
+    export PROJECT_HOME=$HOME/Devel && \
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3 && \
+    source /usr/local/bin/virtualenvwrapper.sh && \
+    mkvirtualenv ml && echo 'Running PIP' && \
+    pip install numpy scipy pandas matplotlib Cython scikit-learn tensorflow-gpu keras torch torchvision",
   ],
   "ROS" : [
-
+    "sudo sh -c 'echo \"deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main\" > /etc/apt/sources.list.d/ros-latest.list'",
+    "sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654",
+    "sudo apt-get update",
+    "sudo apt-get install ros-kinetic-desktop-full -y",
+    "sudo rosdep init",
+    "rosdep update",
+    //"echo \",source /opt/ros/kinetic/setup.bash\" >> ~/.bashrc",
+    //"source ~/.bashrc",
+    "sudo apt-get install python-rosinstall python-rosinstall-generator python-wstool build-essential -y",
   ],
   "cups_printer" : [
     "sudo systemctl stop cups-browsed.service",
@@ -53,34 +70,46 @@
   "MIT_VPN" : [
 
   ],
-  "DRL_UROP" : [
+  "DRL_ROS_setup" : [
     'sudo apt-get install ros-kinetic-catkin -y',
     'sudo sh -c \'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list\'',
     'wget http://packages.ros.org/ros.key -O - | sudo apt-key add -',
     'sudo apt-get update',
-    'sudo apt-get install python-catkin-tools',
-    ' ~/project',
-    'mkdir -p knightrider/catkin_ws/src',
-    'cd knightrider/catkin_ws/src',
-    'git clone --recurse-submodules git@github.com:mit-drl/knightrider-mobility.git',
-    'rosdep update',
-    'rosdep install --from-paths src --ignore-src -r -y',
-    'rosdep update',
-    'rosdep install --from-paths src --ignore-src -r -y',
+    'sudo apt-get install python-catkin-tools -y',
+    ],
+  "drl_clone_repos": [
+    'cd ~/project &&\
+    mkdir -p knightrider/catkin_ws/src && \
+    cd knightrider/catkin_ws/src && \
+    git clone --recurse-submodules git@github.com:mit-drl/knightrider-mobility.git && \
+    rosdep update && \
+    rosdep install --from-paths src --ignore-src -r -y',
+    'cd ~ && "git clone --depth=1 -b 4.19 git@github.com:EpicGames/UnrealEngine.git ~/UnrealEngine_4.19',
+    "cd ~/project/knightrider && mkdir carla && \
+    git clone git@github.com:mit-drl/carla.git && \
+    cd carla && \
+    git checkout 0.9.2-nopng",
+
+  ],
+  "drl_software_depend": [
     "sudo add-apt-repository ppa:ubuntu-toolchain-r/test",
     "sudo apt-get update",
-    "sudo apt-get install build-essential clang-5.0 lld-5.0 g++-7 cmake ninja-build python python-pip python-dev python3-dev python3-pip libtiff5-dev libjpeg-dev tzdata sed curl wget unzip autoconf libtool",
+    "sudo apt-get install build-essential clang-5.0 lld-5.0 g++-7 cmake ninja-build python python-pip python-dev python3-dev python3-pip libtiff5-dev libjpeg-dev tzdata sed curl wget unzip autoconf libtool -y",
     "pip2 install --user setuptools nose2",
     "pip3 install --user setuptools nose2",
     "sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/lib/llvm-5.0/bin/clang++ 101",
-    "sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-5.0/bin/clang 101",
-    "git clone --depth=1 -b 4.19 https://github.com/EpicGames/UnrealEngine.git ~/UnrealEngine_4.19",
-    "cd ~/UnrealEngine_4.19",
-    "./Setup.sh && ./GenerateProjectFiles.sh && make",
-    "git clone git@github.com:mit-drl/carla.git",
-    "cd carla",
-    "git checkout 0.9.2-nopng",
-    "./Update.sh"
+    "sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-5.0/bin/clang 101"
+  ],
+  "drl_build_repos" : [
+    'cd ~/project/knightrider/catkin_ws/src && \
+    ./knightrider-mobility/launch/tools/install_dependencies.sh',
+    "cd cd ~/project/knightrider/catkin_ws && \
+    catkin init && \
+    catkin build",
+    "cd ~/UnrealEngine_4.19 && \
+    ./Setup.sh && ./GenerateProjectFiles.sh && make",
+    "cd ~/projectknightrider/carla && \
+    ./Update.sh"
   ]
 
 }
