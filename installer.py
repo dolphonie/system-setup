@@ -24,16 +24,40 @@ def file_to_list(filename):
             to_ret.append(currentPlace)
     return to_ret
 
+
 def update_progress(progress, name, script_loc):
     # Update progress file
     progress.append(name)
     list_to_file("{}/progress.txt".format(script_loc), progress)
+
+
+def install_pack(progress, name, script_loc, package):
+    # Run line
+    for line in package:
+        print(">>{}".format(line))
+        # Check for macros
+        if 'break:' in line:
+            print(line.replace('break:', ''))
+            update_progress(progress, name, script_loc)
+            return
+        else:
+            split = line.split(" ")
+            command = Popen(line, executable='bash', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            universal_newlines=True)
+            command.communicate()
+            result = command.returncode
+            if result != 0:
+                raise SystemError("Package {} failed installing at line {}".format(name, line))
+
+    update_progress(progress, name, script_loc)
+
 
 def install_packages():
     parser = argparse.ArgumentParser(description='A tutorial of argparse!')
     parser.add_argument("--workdir", default="/home/{}/temp".format(os.getenv('USER')), type=str,
                         help="Working directory")
     parser.add_argument("--ignore-progress", default=False, type=bool, help="Don't install the same package twice")
+    parser.add_argument("--package", default=None, type=str, help="Install 1 specific package (adds to progress)")
 
     args = parser.parse_args()
 
@@ -49,30 +73,21 @@ def install_packages():
     os.system("mkdir -p {}".format(args.workdir))
     os.chdir(args.workdir)
 
-    # Iterate through packages
-    for name, package in packages.items():
-        # check progress
-        if (name in progress) and (not args.ignore_progress):
-            print("Already installed package {}. Skipping".format(name))
-            continue
+    if args.package is not None:
+        if args.package in packages:
+            install_pack(progress, args.package, script_loc, packages[args.package])
+        else:
+            print("Could not find package {} in list".format(args.package))
+    else:
+        # Iterate through packages
+        for name, package in packages.items():
+            # check progress
+            if (name in progress) and (not args.ignore_progress):
+                print("Already installed package {}. Skipping".format(name))
+                continue
 
-        # Run line
-        for line in package:
-            print(">>{}".format(line))
-            # Check for macros
-            if 'break:' in line:
-                print(line.replace('break:', ''))
-                update_progress(progress, name, script_loc)
-                return
-            else:
-                split = line.split(" ")
-                command = Popen(line, executable='bash', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
-                command.communicate()
-                result = command.returncode
-                if result != 0:
-                    raise SystemError("Package {} failed installing at line {}".format(name, line))\
+            install_pack(progress, name, script_loc, package)
 
-        update_progress(progress, name, script_loc)
 
 if __name__ == "__main__":
     install_packages()
