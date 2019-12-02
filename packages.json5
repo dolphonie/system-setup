@@ -24,6 +24,7 @@
   "nvidia_setup" : [
     "sudo add-apt-repository ppa:graphics-drivers/ppa -y",
     "sudo apt-get purge nvidia* -y",
+    "sudo apt-get update",
     "break:Please install NVIDIA drivers (418) and cuDNN then restart installer script"
   ],
   "chrome": [
@@ -37,6 +38,13 @@
     'sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose',
     "sudo chmod +x /usr/local/bin/docker-compose"
   ],
+  "nvidia-docker" : [
+    "distribution=$(. /etc/os-release;echo $ID$VERSION_ID),",
+    "curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -,",
+    "curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list,",
+    "sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit,",
+    "sudo systemctl restart docker",
+  ],
   "virtualenvwrapper" : [
     "sudo pip3 install virtualenvwrapper",
     "echo '#virtualenv init\nexport WORKON_HOME=$HOME/.virtualenvs\nexport PROJECT_HOME=$HOME/Devel\nexport VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3\nsource /usr/local/bin/virtualenvwrapper.sh' >> ~/.bashrc ",
@@ -49,7 +57,7 @@
     export PROJECT_HOME=$HOME/Devel && \
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3 && \
     source /usr/local/bin/virtualenvwrapper.sh && \
-    mkvirtualenv ml && echo 'Running PIP' && \
+    mkvirtualenv ml && \
     pip install numpy scipy pandas matplotlib Cython scikit-learn tensorflow-gpu keras torch torchvision",
   ],
   "ROS" : [
@@ -98,7 +106,13 @@
     "pip2 install --user setuptools nose2",
     "pip3 install --user setuptools nose2",
     "sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/lib/llvm-5.0/bin/clang++ 101",
-    "sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-5.0/bin/clang 101"
+    "sudo update-alternatives --install /usr/bin/clang clang /usr/lib/llvm-5.0/bin/clang 101",
+    "export WORKON_HOME=$HOME/.virtualenvs && \
+    export PROJECT_HOME=$HOME/Devel && \
+    export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3 && \
+    source /usr/local/bin/virtualenvwrapper.sh && \
+    mkvirtualenv -p python2.7 drl && \
+    pip install simple-pid rospkg defusedxml",
   ],
   "drl_build_repos" : [
     'cd ~/project/knightrider/catkin_ws/src && \
@@ -109,7 +123,9 @@
     "cd ~/UnrealEngine_4.19 && \
     ./Setup.sh && ./GenerateProjectFiles.sh && make",
     "cd ~/projectknightrider/carla && \
-    ./Update.sh"
+    ./Update.sh && \
+    make PythonAPI && \
+    easy_install-2.7 --user --no-deps PythonAPI/dist/carla-0.9.2-py2.7-linux-x86_64.egg",
   ]
 
 }
