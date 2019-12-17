@@ -5,6 +5,9 @@ import os
 from collections import OrderedDict
 import subprocess
 from subprocess import Popen
+from pathlib import Path
+import distutils.dir_util
+import sys
 
 
 def list_to_file(filename, list_to_write):
@@ -42,7 +45,8 @@ def install_pack(progress, name, script_loc, package):
             return
         else:
             split = line.split(" ")
-            command = Popen(line, executable='bash', shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            # Sys.stdin and sys.stdout instead of PIPE redirect output
+            command = Popen(line, executable='bash', shell=True, stdin=sys.stdin, stdout=sys.stdout,
                             universal_newlines=True)
             command.communicate()
             result = command.returncode
@@ -67,10 +71,15 @@ def install_packages():
         packages = json5.load(file, object_pairs_hook=OrderedDict)
 
     # load progress list
-    progress = file_to_list("{}/progress.txt".format(script_loc))
+    progress_file = "{}/progress.txt".format(script_loc)
+    Path(progress_file).touch()
+    progress = file_to_list(progress_file)
 
     # Make and switch to workng directory
     os.system("mkdir -p {}".format(args.workdir))
+    # Copy resources into workdir
+    distutils.dir_util.copy_tree("{}/resources".format(os.getcwd()), "{}".format(args.workdir))
+
     os.chdir(args.workdir)
 
     if args.package is not None:

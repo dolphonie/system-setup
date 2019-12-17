@@ -76,7 +76,10 @@
     "sudo systemctl disable cups-browsed.service",
   ],
   "MIT_VPN" : [
-
+    "sudo apt-get update",
+    "sudo apt-get install -y lib32z1 lib32ncurses5",
+    "tar -xzvf anyconnect-linux64-4.6.03049-predeploy-k9.tar.gz",
+    "cd anyconnect-linux64-4.6.03049/vpn && sudo ./vpn_install.sh",
   ],
   "DRL_ROS_setup" : [
     'sudo apt-get install ros-kinetic-catkin -y',
@@ -112,7 +115,7 @@
     export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3 && \
     source /usr/local/bin/virtualenvwrapper.sh && \
     mkvirtualenv -p python2.7 drl && \
-    pip install simple-pid rospkg defusedxml shapely numpy pyproj empy",
+    pip install simple-pid rospkg defusedxml shapely numpy pyproj empy matplotlib scipy==1.2.0 cython scikit-learn==0.20 tslearn",
   ],
   "drl_build_repos" : [
     'cd ~/project/knightrider/catkin_ws/src && \
@@ -126,6 +129,9 @@
     ./Update.sh && \
     make PythonAPI && \
     easy_install-2.7 --user --no-deps PythonAPI/dist/carla-0.9.2-py2.7-linux-x86_64.egg",
+  ],
+  "drl_docker_registry" : [
+    "sudo cp domain.crt /etc/docker/certs.d/ci.drl.csail.mit.edu/ca.crt"
   ]
 
 }
