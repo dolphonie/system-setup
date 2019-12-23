@@ -12,7 +12,7 @@ Run the python file installer.py ex: 'python3 installer.py'
 The installer requires a nonstandard python package called json5, which can be installed with the following command (requires python3 and pip): 'pip3 install json5'
 
 To clone, install dependencies, and run the script in one command, run:
-'git clone https://github.com/dolphonie/system-setup.git && cd system-setup && sudo apt-get update && sudo apt-get install -y python3 python3-pip && pip3 install json5 && python3 installer.py'
+'sudo apt-get update && sudo apt-get install -y python3 python3-pip git && pip3 install json5 && git clone https://github.com/dolphonie/system-setup.git && cd system-setup && python3 installer.py'
 
 ## Available command-line arguments
 - --package: allows for installation of single package from list, after which program will terminate. Needs to be followed by name of package in json file
