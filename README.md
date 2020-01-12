@@ -18,6 +18,7 @@ To clone, install dependencies, and run the script in one command, run:
 - --package: allows for installation of single package from list, after which program will terminate. Needs to be followed by name of package in json file
 - --workdir: by default the program creates a directory in ~/temp and creates all intermediate files in that directory. This argument lets you provide a filepath for these temp files to be created in instead
 - --ignore-progress: ordinarily, the same package can't be installed twice. This argument ignores the progress files and installs all packages from the beginning
+- --file: by default the program gets commands from a file called packages.json5. This flag lets you specify which JSON file you'd like the program to pull from
 
 ## JSON file format
 The json file containing all lines to be executed must be grouped in the following way: (Note, the program supports json5 file formatting, allowing for commments and trailing commas)

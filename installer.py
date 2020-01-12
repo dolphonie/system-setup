@@ -62,12 +62,14 @@ def install_packages():
                         help="Working directory")
     parser.add_argument("--ignore-progress", default=False, type=bool, help="Don't install the same package twice")
     parser.add_argument("--package", default=None, type=str, help="Install 1 specific package (adds to progress)")
+    parser.add_argument("--file", default="./packages.json5", type=str,
+                        help="Path to json file that contains packages to install")
 
     args = parser.parse_args()
 
     script_loc = os.getcwd()
     # load package dict
-    with open('./packages.json5', 'r') as file:
+    with open(args.file, 'r') as file:
         packages = json5.load(file, object_pairs_hook=OrderedDict)
 
     # load progress list
