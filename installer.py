@@ -35,6 +35,7 @@ def update_progress(progress, name, script_loc):
 
 
 def install_pack(progress, name, script_loc, package):
+    print("[Installer] Installing package {}".format(name))
     # Run line
     for line in package:
         print(">>{}".format(line))
@@ -61,7 +62,13 @@ def install_packages():
     parser.add_argument("--workdir", default="/home/{}/temp".format(os.getenv('USER')), type=str,
                         help="Working directory")
     parser.add_argument("--ignore-progress", default=False, type=bool, help="Don't install the same package twice")
-    parser.add_argument("--package", default=None, type=str, help="Install 1 specific package (adds to progress)")
+    parser.add_argument(
+        "--packages",
+        nargs="*",  # 0 or more values expected => creates a list
+        type=str,
+        default=None,  # default if nothing is provided
+        help="Install specific packages provided by list (ignores progress but adds to progress)"
+    )
     parser.add_argument("--file", default="./packages.json5", type=str,
                         help="Path to json file that contains packages to install")
 
@@ -84,17 +91,18 @@ def install_packages():
 
     os.chdir(args.workdir)
 
-    if args.package is not None:
-        if args.package in packages:
-            install_pack(progress, args.package, script_loc, packages[args.package])
-        else:
-            print("Could not find package {} in list".format(args.package))
+    if args.packages is not None:
+        for package in args.packages:
+            if package in packages:
+                install_pack(progress, package, script_loc, packages[package])
+            else:
+                print("[Installer] Could not find package {} in JSON".format(package))
     else:
         # Iterate through packages
         for name, package in packages.items():
             # check progress
             if (name in progress) and (not args.ignore_progress):
-                print("Already installed package {}. Skipping".format(name))
+                print("[Installer] Already installed package {}. Skipping".format(name))
                 continue
 
             install_pack(progress, name, script_loc, package)
