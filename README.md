@@ -29,12 +29,12 @@ The json file containing all lines to be executed must be grouped in the followi
 
 ### Macros
 All macros will begin will their "macro-name:", followed by their content
-#### "break:
+#### break:
 The program will print everything following the macro and then exit the program, marking the current package as finished
 
-#### "info:" macro
+#### info:
 The program will print everything following the macro and then continue to the next line
 
-#### "ternary:" macro
+#### ternary:
 The program will evaluate a bash ternary conditional of the form:
 expr *? opt1 *: opt2
