@@ -12,7 +12,10 @@
                              python3-pip \
                              trash-cli \
                              cmake \
-                             curl"
+                             curl \
+                             sshfs \
+			     exfat-fuse \
+                             exfat-utils"
   ],
   "ssh_keys" : [
     'ssh-keygen -t rsa -b 4096 -C "pdkao@mit.edu"',
@@ -80,5 +83,8 @@
     "sudo apt-get install -y lib32z1 lib32ncurses5",
     "tar -xzvf anyconnect-linux64-4.6.03049-predeploy-k9.tar.gz",
     "cd anyconnect-linux64-4.6.03049/vpn && sudo ./vpn_install.sh",
+  ],
+  "utils" : [
+    "timedatectl set-local-rtc 1 --adjust-system-clock"
   ]
 }
